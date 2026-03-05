@@ -1,0 +1,7 @@
+{
+  "name": "OdontoSaaS - Gestão Clínica Profissional",
+  "description": "Sistema completo de gestão odontológica com site institucional e dashboard administrativo moderno.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
