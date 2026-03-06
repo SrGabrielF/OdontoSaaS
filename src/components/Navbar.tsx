@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Stethoscope } from 'lucide-react';
+import { Menu, X, Stethoscope, LayoutDashboard, LogIn } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from '../utils/cn';
+import { useAuth } from '../context/AuthContext';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -50,8 +52,18 @@ export const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Link to="/dashboard">
-              <Button size="sm">Área Restrita</Button>
+            <Link to={isAuthenticated ? "/dashboard" : "/login"}>
+              <Button size="sm" className="gap-2">
+                {isAuthenticated ? (
+                  <>
+                    <LayoutDashboard className="h-4 w-4" /> Dashboard
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-4 w-4" /> Área Restrita
+                  </>
+                )}
+              </Button>
             </Link>
           </div>
 
@@ -76,8 +88,18 @@ export const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-              <Button className="w-full">Área Restrita</Button>
+            <Link to={isAuthenticated ? "/dashboard" : "/login"} onClick={() => setIsOpen(false)}>
+              <Button className="w-full gap-2">
+                {isAuthenticated ? (
+                  <>
+                    <LayoutDashboard className="h-5 w-5" /> Dashboard
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-5 w-5" /> Área Restrita
+                  </>
+                )}
+              </Button>
             </Link>
           </div>
         </div>

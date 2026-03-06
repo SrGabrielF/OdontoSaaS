@@ -8,11 +8,13 @@ import { Home } from './pages/public/Home';
 import { Services } from './pages/public/Services';
 import { Team } from './pages/public/Team';
 import { Contact } from './pages/public/Contact';
+import { Login } from './pages/public/Login';
 import { DashboardHome } from './pages/dashboard/DashboardHome';
 import { Reception } from './pages/dashboard/Reception';
 import { Evaluation } from './pages/dashboard/Evaluation';
 import { Treatment } from './pages/dashboard/Treatment';
 import { Payment } from './pages/dashboard/Payment';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { useEffect } from 'react';
 
 // Scroll to top on route change
@@ -72,30 +74,34 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex min-h-screen bg-slate-50">
-    <Sidebar />
-    <div className="flex-1 flex flex-col">
-      <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-30">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-medium text-slate-500">Unidade: São Paulo - Paulista</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-slate-900">Dr. Carlos Mendes</p>
-            <p className="text-xs text-slate-500">Diretor Clínico</p>
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  
+  return (
+    <div className="flex min-h-screen bg-slate-50">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-slate-500">Unidade: São Paulo - Paulista</span>
           </div>
-          <div className="h-10 w-10 rounded-full bg-clinical-blue text-white flex items-center justify-center font-bold">
-            CM
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold text-slate-900">{user?.name || 'Usuário'}</p>
+              <p className="text-xs text-slate-500 capitalize">{user?.role === 'admin' ? 'Diretor Clínico' : user?.role}</p>
+            </div>
+            <div className="h-10 w-10 rounded-full bg-clinical-blue text-white flex items-center justify-center font-bold">
+              {user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || 'U'}
+            </div>
           </div>
-        </div>
-      </header>
-      <main className="p-8 max-w-7xl mx-auto w-full">
-        {children}
-      </main>
+        </header>
+        <main className="p-8 max-w-7xl mx-auto w-full">
+          {children}
+        </main>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function App() {
   return (
@@ -110,13 +116,14 @@ export default function App() {
           <Route path="/servicos" element={<PublicLayout><Services /></PublicLayout>} />
           <Route path="/equipe" element={<PublicLayout><Team /></PublicLayout>} />
           <Route path="/contato" element={<PublicLayout><Contact /></PublicLayout>} />
+          <Route path="/login" element={<Login />} />
 
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout><DashboardHome /></DashboardLayout>} />
-          <Route path="/dashboard/recepcao" element={<DashboardLayout><Reception /></DashboardLayout>} />
-          <Route path="/dashboard/avaliacao" element={<DashboardLayout><Evaluation /></DashboardLayout>} />
-          <Route path="/dashboard/tratamento" element={<DashboardLayout><Treatment /></DashboardLayout>} />
-          <Route path="/dashboard/pagamento" element={<DashboardLayout><Payment /></DashboardLayout>} />
+          {/* Dashboard Routes (Protected) */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><DashboardHome /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/dashboard/recepcao" element={<ProtectedRoute><DashboardLayout><Reception /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/dashboard/avaliacao" element={<ProtectedRoute allowedRoles={['admin', 'dentist']}><DashboardLayout><Evaluation /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/dashboard/tratamento" element={<ProtectedRoute allowedRoles={['admin', 'dentist']}><DashboardLayout><Treatment /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/dashboard/pagamento" element={<ProtectedRoute allowedRoles={['admin', 'receptionist']}><DashboardLayout><Payment /></DashboardLayout></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

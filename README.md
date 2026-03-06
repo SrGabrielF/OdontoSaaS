@@ -1,20 +1,22 @@
-# Clínica Odontológica - Sistema Frontend
+# OdontoSaaS 🦷
 
-Projeto desenvolvido em React utilizando Vite.
+Sistema SaaS para gestão de clínicas odontológicas.
 
 ## Tecnologias
 
 - React
-- JavaScript
 - Vite
+- JavaScript
+- TailwindCSS
 
 ## Funcionalidades
 
 - Cadastro de pacientes
-- Fluxo de atendimento
-- Avaliação odontológica
-- Registro de tratamentos
-- Simulação de pagamento
+- Agenda de consultas
+- Diagnóstico odontológico
+- Controle de tratamentos
+- Sistema de pagamentos
+- Dashboard administrativo
 
 ## Rodar o projeto
 
