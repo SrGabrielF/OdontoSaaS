@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
+  Calendar as CalendarIcon,
   Users, 
   ClipboardCheck, 
   Activity, 
@@ -33,6 +34,7 @@ export const Sidebar = () => {
 
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, end: true },
+    { name: 'Agenda', path: '/dashboard/agenda', icon: CalendarIcon },
     { name: 'Recepção', path: '/dashboard/recepcao', icon: Users },
     { name: 'Avaliação', path: '/dashboard/avaliacao', icon: ClipboardCheck },
     { name: 'Tratamento', path: '/dashboard/tratamento', icon: Activity },

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Activity, Plus, Trash2, Calculator, CheckCircle2, User } from 'lucide-react';
+import { Activity, Plus, Trash2, Calculator, CheckCircle2, User, FileText } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { useClinic } from '../../context/ClinicContext';
 import { formatCurrency, calculateTotal } from '../../utils/helpers';
+import { generateBudgetPDF } from '../../utils/pdfGenerator';
 import { useNavigate } from 'react-router-dom';
 
 export const Treatment = () => {
@@ -20,6 +21,18 @@ export const Treatment = () => {
   };
 
   const total = calculateTotal(selectedProcedures);
+
+  const handleGeneratePDF = () => {
+    if (!currentPatient || selectedProcedures.length === 0) return;
+    
+    generateBudgetPDF({
+      patientName: currentPatient.name,
+      procedures: selectedProcedures,
+      total: total,
+      date: new Date().toLocaleDateString('pt-BR'),
+      clinicName: 'OdontoSaaS'
+    });
+  };
 
   if (!currentPatient) {
     return (
@@ -126,13 +139,23 @@ export const Treatment = () => {
                   <span className="text-2xl font-black text-clinical-blue">{formatCurrency(total)}</span>
                 </div>
               </div>
-              <Button 
-                className="w-full mt-6" 
-                disabled={selectedProcedures.length === 0}
-                onClick={() => navigate('/dashboard/pagamento', { state: { procedures: selectedProcedures, total } })}
-              >
-                Finalizar e Cobrar
-              </Button>
+              <div className="flex flex-col gap-3 mt-6">
+                <Button 
+                  variant="outline"
+                  className="w-full gap-2" 
+                  disabled={selectedProcedures.length === 0}
+                  onClick={handleGeneratePDF}
+                >
+                  <FileText className="h-4 w-4" /> Gerar PDF do Orçamento
+                </Button>
+                <Button 
+                  className="w-full" 
+                  disabled={selectedProcedures.length === 0}
+                  onClick={() => navigate('/dashboard/pagamento', { state: { procedures: selectedProcedures, total } })}
+                >
+                  Finalizar e Cobrar
+                </Button>
+              </div>
             </div>
           </Card>
         </div>

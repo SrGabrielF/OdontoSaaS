@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React from "react";
 import { ClinicProvider } from './context/ClinicContext';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -10,6 +11,7 @@ import { Team } from './pages/public/Team';
 import { Contact } from './pages/public/Contact';
 import { Login } from './pages/public/Login';
 import { DashboardHome } from './pages/dashboard/DashboardHome';
+import { Agenda } from './pages/dashboard/Agenda';
 import { Reception } from './pages/dashboard/Reception';
 import { Evaluation } from './pages/dashboard/Evaluation';
 import { Treatment } from './pages/dashboard/Treatment';
@@ -120,6 +122,7 @@ export default function App() {
 
           {/* Dashboard Routes (Protected) */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><DashboardHome /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/dashboard/agenda" element={<ProtectedRoute><DashboardLayout><Agenda /></DashboardLayout></ProtectedRoute>} />
           <Route path="/dashboard/recepcao" element={<ProtectedRoute><DashboardLayout><Reception /></DashboardLayout></ProtectedRoute>} />
           <Route path="/dashboard/avaliacao" element={<ProtectedRoute allowedRoles={['admin', 'dentist']}><DashboardLayout><Evaluation /></DashboardLayout></ProtectedRoute>} />
           <Route path="/dashboard/tratamento" element={<ProtectedRoute allowedRoles={['admin', 'dentist']}><DashboardLayout><Treatment /></DashboardLayout></ProtectedRoute>} />

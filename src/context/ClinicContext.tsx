@@ -65,6 +65,9 @@ export const ClinicProvider = ({ children }: { children: ReactNode }) => {
     try {
       await patientService.updateStatus(id, status);
       setPatients(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+      if (currentPatient && currentPatient.id === id) {
+        setCurrentPatient({ ...currentPatient, status });
+      }
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
     }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import React from "react";
 import { Search, Plus, UserPlus, Phone, Calendar as CalendarIcon, Filter } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -9,7 +10,7 @@ import { useClinic } from '../../context/ClinicContext';
 import { useToast } from '../../context/ToastContext';
 
 export const Reception = () => {
-  const { patients, addPatient, selectPatient } = useClinic();
+  const { patients, addPatient, selectPatient, updatePatientStatus } = useClinic();
   const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +30,8 @@ export const Reception = () => {
 
   const handleSelectPatient = (patient: any) => {
     selectPatient(patient);
-    showToast(`Paciente ${patient.name} selecionado para atendimento.`, 'info');
+    updatePatientStatus(patient.id, 'Em avaliação');
+    showToast(`Paciente ${patient.name} selecionado para avaliação.`, 'info');
   };
 
   return (

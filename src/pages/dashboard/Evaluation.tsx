@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { ClipboardCheck, User, Stethoscope, AlertCircle, ArrowRight } from 'lucide-react';
+import { ClipboardCheck, User, Stethoscope, AlertCircle, ArrowRight, FileText, Pill, FileWarning, Share2 } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { useClinic } from '../../context/ClinicContext';
 import { useNavigate } from 'react-router-dom';
+import { generatePrescriptionPDF, generateCertificatePDF, generateReferralPDF } from '../../utils/pdfGenerator';
+import { useAuth } from '../../context/AuthContext';
 
 export const Evaluation = () => {
   const { currentPatient, updatePatientStatus } = useClinic();
+  const { user } = useAuth();
   const [diagnosis, setDiagnosis] = useState('');
   const [observations, setObservations] = useState('');
   const navigate = useNavigate();
@@ -15,6 +18,41 @@ export const Evaluation = () => {
     if (!currentPatient) return;
     updatePatientStatus(currentPatient.id, 'Em atendimento');
     navigate('/dashboard/tratamento');
+  };
+
+  const handlePrescription = () => {
+    if (!currentPatient) return;
+    generatePrescriptionPDF({
+      patientName: currentPatient.name,
+      medications: '1. Amoxicilina 500mg - 1 comprimido de 8 em 8 horas por 7 dias.\n2. Paracetamol 750mg - 1 comprimido de 6 em 6 horas em caso de dor.',
+      date: new Date().toLocaleDateString('pt-BR'),
+      clinicName: 'OdontoSaaS',
+      dentistName: user?.name || 'Dr. Carlos Mendes'
+    });
+  };
+
+  const handleCertificate = () => {
+    if (!currentPatient) return;
+    generateCertificatePDF({
+      patientName: currentPatient.name,
+      days: 1,
+      reason: 'Procedimento Odontológico',
+      date: new Date().toLocaleDateString('pt-BR'),
+      clinicName: 'OdontoSaaS',
+      dentistName: user?.name || 'Dr. Carlos Mendes'
+    });
+  };
+
+  const handleReferral = () => {
+    if (!currentPatient) return;
+    generateReferralPDF({
+      patientName: currentPatient.name,
+      specialty: 'Endodontia',
+      observations: 'Paciente apresenta necessidade de tratamento de canal no elemento 26.',
+      date: new Date().toLocaleDateString('pt-BR'),
+      clinicName: 'OdontoSaaS',
+      dentistName: user?.name || 'Dr. Carlos Mendes'
+    });
   };
 
   if (!currentPatient) {
@@ -61,6 +99,43 @@ export const Evaluation = () => {
               value={observations}
               onChange={e => setObservations(e.target.value)}
             />
+          </Card>
+
+          <Card title="Documentos Clínicos">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button 
+                onClick={handlePrescription}
+                className="flex flex-col items-center justify-center p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-clinical-blue hover:shadow-md transition-all group"
+              >
+                <div className="bg-clinical-blue/10 p-3 rounded-xl mb-3 group-hover:bg-clinical-blue group-hover:text-white transition-colors">
+                  <Pill className="h-6 w-6 text-clinical-blue group-hover:text-white" />
+                </div>
+                <span className="font-bold text-slate-900">Receituário</span>
+                <span className="text-xs text-slate-500 mt-1">Gerar receita em PDF</span>
+              </button>
+
+              <button 
+                onClick={handleCertificate}
+                className="flex flex-col items-center justify-center p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-clinical-blue hover:shadow-md transition-all group"
+              >
+                <div className="bg-clinical-blue/10 p-3 rounded-xl mb-3 group-hover:bg-clinical-blue group-hover:text-white transition-colors">
+                  <FileWarning className="h-6 w-6 text-clinical-blue group-hover:text-white" />
+                </div>
+                <span className="font-bold text-slate-900">Atestado</span>
+                <span className="text-xs text-slate-500 mt-1">Gerar atestado em PDF</span>
+              </button>
+
+              <button 
+                onClick={handleReferral}
+                className="flex flex-col items-center justify-center p-6 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-clinical-blue hover:shadow-md transition-all group"
+              >
+                <div className="bg-clinical-blue/10 p-3 rounded-xl mb-3 group-hover:bg-clinical-blue group-hover:text-white transition-colors">
+                  <Share2 className="h-6 w-6 text-clinical-blue group-hover:text-white" />
+                </div>
+                <span className="font-bold text-slate-900">Encaminhar</span>
+                <span className="text-xs text-slate-500 mt-1">Gerar encaminhamento</span>
+              </button>
+            </div>
           </Card>
         </div>
 
